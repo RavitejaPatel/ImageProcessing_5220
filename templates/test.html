@@ -1,0 +1,130 @@
+<html>
+<head>
+<style>
+  a.button {
+  /* use inline-block because it respects padding */
+  display: inline-block;
+  /* padding creates clickable area around text (top/bottom, left/right) */
+  padding: 1em 3em;
+  /* round corners */
+  border-radius: 5px;
+  /* remove underline */
+  text-decoration: none;
+  /* set colors */
+  color: rgb(98, 100, 98);
+  background-color: #269abc;
+}
+
+</style>
+<script type="text/javascript"> 
+function prepHref(linkElement) { 
+    var myDiv = document.getElementById('fullsized_image_holder'); 
+    var myImage = myDiv.children[0]; 
+    linkElement.href = myImage.src; 
+} 
+</script> 
+<script src="https://code.jquery.com/jquery-3.5.1.js"
+          integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+          crossorigin="anonymous"></script>
+ 
+  <script type="text/javascript">
+    $(document).on('submit','#todo-form',function(e)
+                   {
+      console.log('hello');
+      e.preventDefault();
+      $.ajax({
+        type:'POST',
+        url:'/',
+        data:{
+          todo:$("#todo").val()
+        },
+        success:function()
+        {
+         
+        }
+      })
+    });
+  </script> 
+<title>Image Processing </title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />        
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+</head>
+<body style="background-color:rgb(165, 169, 172)">
+<p><h1 align="center">IMAGE PROCESSOR</h1></p>
+<div class="container" >
+<div class="row">
+    <h2>Select a file to upload</h2>
+    <p>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </p>
+    
+    <form method="post" action="/" enctype="multipart/form-data" method="POST" enctype="multipart/form-data">
+        <dl>
+            <p>
+                <input type="file" name="file" class="form-control" autocomplete="off" required style="max-width: 500px;">
+            </p>
+        </dl>
+        <p>
+            <input type="submit" value="Submit" class="btn btn-info">
+        </p>
+    </form>
+    {% if filename %}
+        <div  class="row marketing" >
+        	<div class="jumbotron" style="max-width: 700px;" id="fullsized_image_holder">
+
+           
+
+            <img src="{{ url_for('static', filename=filename) }}" style="max-width: 500px;"/>
+        </div>
+            <div class="col-lg-6">
+                <h4>Flip</h4>
+                <form id="form-flip" action="{{ url_for('flip') }}" method="POST" enctype="multipart/form-data">        
+                  <button type="button" class="btn btn-info" type="submit" name="mode" value="vertical">Vertical</button>
+                  <button type="button" class="btn btn-info" type="submit" name="mode" value="horizontal">Horizontal</button>
+                  <br />
+                <h4>Rotate Direction</h4>
+                <button type="button" class="btn btn-info" type="submit" name="mode" value="left">Left</button>
+                <button type="button" class="btn btn-info" type="submit" name="mode" value="right">Right</button>
+                 <br />
+                <h4>GrayScale and Thumbnail</h4>
+                <button type="button" class="btn btn-info" type="submit" name="mode" value="gs">GrayScale</button>
+                <button type="button" class="btn btn-info"type="submit" name="mode" value="tl">Thumbnail</button>
+
+
+			  		<input type="text" class="hidden" name="image" value="{{ url_for('display_image', filename=filename) }}">  
+
+                </form>
+ 
+                              
+            </div>
+            <div class="col-lg-6">
+                <h4>Rotate</h4>
+                <form id="form-rotate" action="{{ url_for('rotate') }}" method="POST" enctype="multipart/form-data"> 
+			         <input type="number" name="angle" min="-359" max="359" placeholder="degrees" required>        
+               <button type="button" class="btn btn-info" type="submit">Go</button>
+	  		           <input type="text" class="hidden" name="image" value="{{ url_for('display_image', filename=filename) }}">
+                </form>
+                <h4>Resize</h4>
+                <form id="form-crop" action="{{ url_for('crop') }}" method="POST" enctype="multipart/form-data">
+                  <input type="number" placeholder="ht" min="0" name="x1" required>  
+                  <input type="number" placeholder="wt" min="0" name="y1" required>                 
+                                              
+                  <button type="button" class="btn btn-info" type="submit">Go</button>
+              <input type="text" class="hidden" name="image" value="{{ url_for('display_image', filename=filename) }}">
+                </form>  
+                <a href="#" onclick="prepHref(this)" download class="button">download</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+</div>
+</body>
+</html>
